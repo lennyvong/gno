@@ -9,6 +9,8 @@ const (
 	// FuncTypeCommit means the agent is requesting a feed commit the transitive data
 	// being held by its ingester.
 	FuncTypeCommit FuncType = "commit"
+  // FuncTypeIngestCommit means the agent is sending data for ingestion and requesting
+  FuncTypeIngestCommit FuncType = "ingest_commit"
 	// FuncTypeRequest means the agent is requesting feed definitions for all those
 	// that it is whitelisted to provide data for.
 	FuncTypeRequest FuncType = "request"

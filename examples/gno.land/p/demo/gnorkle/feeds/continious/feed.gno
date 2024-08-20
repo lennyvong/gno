@@ -1,6 +1,7 @@
 package continious
 
 import (
+  "errors"
 	"bufio"
 	"bytes"
 
@@ -54,6 +55,14 @@ func (f *Feed) Ingest(funcType message.FuncType, msg, providerAddress string) er
 	}
 
 	switch funcType {
+  case message.FuncTypeIngestCommit:
+		if canAutoCommit, err := f.ingester.Ingest(msg, providerAddress); canAutoCommit && err == nil {
+			if err := f.ingester.CommitValue(f.storage, providerAddress); err != nil {
+				return err
+			}
+		} else if err != nil {
+			return err
+		}
 	case message.FuncTypeIngest:
 		if _, err := f.ingester.Ingest(msg, providerAddress); err != nil {
 			return err
@@ -62,6 +71,8 @@ func (f *Feed) Ingest(funcType message.FuncType, msg, providerAddress string) er
 		if err := f.ingester.CommitValue(f.storage, providerAddress); err != nil {
 			return err
 		}
+  default:
+    return errors.New("invalid message function " + string(funcType))
 
 	}
 	return nil
